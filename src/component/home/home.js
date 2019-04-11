@@ -14,33 +14,45 @@ let drag = false;
 let newData = [];
 let scrollX, scrollY;
 
+let isRect = false;
+
 
 class Home extends Component {
 
     state = {
         rectNumbers: []
     };
+
     showLine = (data) => {
+
+        let showDatas = [];
+
         if (newData.length > 0) {
             for (let i = 0; i < newData.length; i++) {
-                data.push(newData[i]);
-
+                showDatas.push(newData[i]);
             }
+
         }
-        this.setState({rectNumbers: data});
+
+        showDatas.push(data[0]);
+
+        this.setState({rectNumbers: showDatas});
+
+
     };
 
-    changeSize = (e) => {
-        const {width, height, rectNumbers} = this.state;
-        let index = e.currentTarget.index;
-        rectNumbers[index - 1].x = e.evt.offsetX - width / 2;
-        rectNumbers[index - 1].y = e.evt.offsetY - height / 2;
-        this.setState({rectNumbers: rectNumbers});
+    changeSize = (item, index, e) => {
+        isRect = true;
+        newData[index].x = e.target.attrs.x;
+        newData[index].y = e.target.attrs.y;
     };
 
     componentDidMount() {
         let _that = this;
         document.onmousedown = function (ev) {
+            if (isRect) {
+                return;
+            }
             let e = ev || window.event;
             scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
             scrollY = document.documentElement.scrollTop || document.body.scrollTop;
@@ -64,6 +76,9 @@ class Home extends Component {
         };
 
         document.onmousemove = function (ev) {
+            if (isRect) {
+                return;
+            }
             allData = [];
             if (drag) {
                 let width = (ev.pageX - scrollX) - startX;
@@ -76,7 +91,25 @@ class Home extends Component {
                 allData.push(data);
                 _that.showLine(allData);
             }
-        }
+        };
+        //监听esc事件 取消
+        document.onkeydown = function (event) {
+            let e = event || window.event;
+            if (e && e.keyCode === 27) {
+                allData = [];
+                newData = [];
+                isRect = false;
+                _that.setState({rectNumbers: []})
+            }
+        };
+    }
+
+    static onmouseover() {
+        isRect = true;
+    }
+
+    static onmouseout() {
+        isRect = false;
     }
 
 
@@ -103,7 +136,9 @@ class Home extends Component {
                                 width={item.width}
                                 height={item.height}
                                 fill={item.color}
-                                onDragEnd={this.changeSize}
+                                onmouseover={Home.onmouseover}
+                                onmouseout={Home.onmouseout}
+                                onDragEnd={(e) => this.changeSize(item, i, e)}
                             />
                         ))}
                     </Layer>
