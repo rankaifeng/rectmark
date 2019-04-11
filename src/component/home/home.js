@@ -14,54 +14,27 @@ let drag = false;
 let newData = [];
 let scrollX, scrollY;
 
-let datas = [];
 
 class Home extends Component {
 
     state = {
         rectNumbers: []
     };
+    showLine = (data) => {
+        if (newData.length > 0) {
+            for (let i = 0; i < newData.length; i++) {
+                data.push(newData[i]);
 
-    uniq(array) {
-        var temp = []; //一个新的临时数组
-        for (var i = 0; i < array.length; i++) {
-            if (temp.indexOf(array[i]) == -1) {
-                temp.push(array[i]);
             }
         }
-        return temp;
-    }
-
-    showLine = (data) => {
-        // newData.push(data[0]);
-        // let uniq1 = this.uniq(newData);
-        //
-        // let item = {
-        //     x: uniq1[0].x,
-        //     y: uniq1[0].y,
-        //     width: uniq1[0].width,
-        //     height: uniq1[0].height,
-        //     color: uniq1[0].color
-        // };
-        //
-        // datas.push(item);
-
-
         this.setState({rectNumbers: data});
-
-
-        console.log(data[0])
     };
 
     changeSize = (e) => {
         const {width, height, rectNumbers} = this.state;
-
         let index = e.currentTarget.index;
-
         rectNumbers[index - 1].x = e.evt.offsetX - width / 2;
         rectNumbers[index - 1].y = e.evt.offsetY - height / 2;
-
-        console.log(e);
         this.setState({rectNumbers: rectNumbers});
     };
 
@@ -78,7 +51,6 @@ class Home extends Component {
 
         document.onmouseup = function (ev) {
             drag = false;
-
             if (allData.length > 0) {
                 let item = {
                     x: allData[0].x,
@@ -87,12 +59,8 @@ class Home extends Component {
                     height: allData[0].height,
                     color: allData[0].color
                 };
-
                 newData.push(item);
-                _that.setState({rectNumbers: newData});
-
             }
-
         };
 
         document.onmousemove = function (ev) {
