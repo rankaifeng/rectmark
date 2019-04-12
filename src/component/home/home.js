@@ -4,6 +4,7 @@ import {Layer, Rect, Stage} from 'react-konva';
 import URLImage from './urlimg';
 
 import bgImg from '../../img/bg.jpg';
+import TransformerComponent from './transformer';
 
 let allData = [];
 
@@ -23,9 +24,11 @@ class Home extends Component {
         rectNumbers: []
     };
 
+
     showLine = (data) => {
 
         let showDatas = [];
+
 
         if (newData.length > 0) {
             for (let i = 0; i < newData.length; i++) {
@@ -50,6 +53,7 @@ class Home extends Component {
     componentDidMount() {
         let _that = this;
         document.onmousedown = function (ev) {
+            allData = [];
             if (isRect) {
                 return;
             }
@@ -63,6 +67,7 @@ class Home extends Component {
 
         document.onmouseup = function (ev) {
             drag = false;
+
             if (allData.length > 0) {
                 let item = {
                     x: allData[0].x,
@@ -79,7 +84,6 @@ class Home extends Component {
             if (isRect) {
                 return;
             }
-            allData = [];
             if (drag) {
                 let width = (ev.pageX - scrollX) - startX;
                 let height = (ev.pageY - scrollY) - startY;
@@ -112,11 +116,35 @@ class Home extends Component {
         isRect = false;
     }
 
+    handleStageMouseDown = e => {
+        if (!this.state.closed) {
+            return;
+        }
+        if (e.target === e.target.getStage()) {
+            this.setState({
+                selectedName: ''
+            });
+            return;
+        }
+        const clickedOnTransformer =
+            e.target.getParent().className === 'Transformer';
+        if (clickedOnTransformer) {
+            return;
+        }
+
+        const name = e.target.name();
+
+        this.setState({
+            selectedName: name
+        })
+    };
 
     render() {
         return (
             <div style={{height: '100%'}}>
                 <Stage
+                    name="rect"
+                    onMouseDown={this.handleStageMouseDown}
                     width={window.innerWidth}
                     height={window.innerHeight}>
                     <Layer>
@@ -141,6 +169,8 @@ class Home extends Component {
                                 onDragEnd={(e) => this.changeSize(item, i, e)}
                             />
                         ))}
+                        <TransformerComponent
+                            selectedName={this.state.selectedName}/>
                     </Layer>
                 </Stage>
             </div>
