@@ -21,7 +21,8 @@ let isRect = false;
 class Home extends Component {
 
     state = {
-        rectNumbers: []
+        rectNumbers: [],
+        selectedShapeName: ''
     };
 
 
@@ -78,6 +79,7 @@ class Home extends Component {
                 };
                 newData.push(item);
             }
+            console.log(JSON.stringify(newData))
         };
 
         document.onmousemove = function (ev) {
@@ -117,9 +119,6 @@ class Home extends Component {
     }
 
     handleStageMouseDown = e => {
-        if (!this.state.closed) {
-            return;
-        }
         if (e.target === e.target.getStage()) {
             this.setState({
                 selectedName: ''
@@ -134,10 +133,20 @@ class Home extends Component {
 
         const name = e.target.name();
 
+        console.log(name)
         this.setState({
             selectedName: name
         })
     };
+
+    static onTransformStart(e) {
+        console.log(e)
+        isRect = true;
+    }
+
+    static onTransFormend() {
+        isRect = false;
+    }
 
     render() {
         return (
@@ -156,15 +165,18 @@ class Home extends Component {
 
                             <Rect
                                 key={i}
+                                name={"rect" + i}
                                 x={item.x}
                                 y={item.y}
                                 draggable
                                 stroke='blue'
-                                strokeWidth={1}
+                                strokeWidth={0.5}
                                 width={item.width}
                                 height={item.height}
                                 fill={item.color}
+                                ontransform={Home.onTransformStart}
                                 onmouseover={Home.onmouseover}
+                                ontransformend={Home.onTransFormend}
                                 onmouseout={Home.onmouseout}
                                 onDragEnd={(e) => this.changeSize(item, i, e)}
                             />
