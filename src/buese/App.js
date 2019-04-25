@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {HashRouter, Route, Switch} from "react-router-dom";
-import Home from '../component/home/home';
+import ImgMark from '../component/imgmark/imgmark';
+import MarkList from '../component/marklist/marklist';
+import 'antd/dist/antd.css';
 import '../css/App.css';
 
 class App extends Component {
@@ -8,7 +10,8 @@ class App extends Component {
         return (
             <HashRouter>
                 <Switch>
-                    <Route path="/" exact component={Home}/>
+                    <Route path="/" exact component={MarkList}/>
+                    <Route path="/img_mark" exact component={ImgMark}/>
                 </Switch>
             </HashRouter>
         );

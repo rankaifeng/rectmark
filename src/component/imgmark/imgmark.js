@@ -18,7 +18,7 @@ let scrollX, scrollY;
 let isRect = false;
 
 
-class Home extends Component {
+class ImgMark extends Component {
 
     state = {
         rectNumbers: [],
@@ -110,13 +110,13 @@ class Home extends Component {
         };
     }
 
-    static onmouseover() {
+    onmouseover = () => {
         isRect = true;
-    }
+    };
 
-    static onmouseout() {
+    onmouseout = () => {
         isRect = false;
-    }
+    };
 
     handleStageMouseDown = e => {
         if (e.target === e.target.getStage()) {
@@ -133,20 +133,19 @@ class Home extends Component {
 
         const name = e.target.name();
 
-        console.log(name)
         this.setState({
             selectedName: name
         })
     };
 
-    static onTransformStart(e) {
-        console.log(e)
+    onTransformStart = (e) => {
+        console.log(e);
         isRect = true;
-    }
+    };
 
-    static onTransFormend() {
+    onTransFormend = () => {
         isRect = false;
-    }
+    };
 
     render() {
         return (
@@ -174,10 +173,10 @@ class Home extends Component {
                                 width={item.width}
                                 height={item.height}
                                 fill={item.color}
-                                ontransform={Home.onTransformStart}
-                                onmouseover={Home.onmouseover}
-                                ontransformend={Home.onTransFormend}
-                                onmouseout={Home.onmouseout}
+                                ontransform={this.onTransformStart}
+                                onmouseover={this.onmouseover}
+                                ontransformend={this.onTransFormend}
+                                onmouseout={this.onmouseout}
                                 onDragEnd={(e) => this.changeSize(item, i, e)}
                             />
                         ))}
@@ -192,4 +191,4 @@ class Home extends Component {
 }
 
 
-export default Home;
+export default ImgMark;
