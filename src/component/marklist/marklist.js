@@ -4,9 +4,8 @@ import two from '../../img/two.jpeg';
 import three from '../../img/three.jpeg';
 import four from '../../img/four.jpeg';
 import five from '../../img/five.jpeg';
-import {Button} from 'antd';
+import {Button, Pagination} from 'antd';
 import './marklist.css';
-import {Pagination} from 'antd';
 
 let imgLists = [{imgUrl: one, id: '1', ip: '192.168.2.1', name: '测试'},
     {imgUrl: two, id: '2', ip: '192.168.2.2', name: '测试'},
@@ -44,8 +43,8 @@ class MarkList extends Component {
         }
     };
 
-    onMarkClick = () => {
-        this.props.history.push("/img_mark");
+    onMarkClick = (item) => {
+        this.props.history.push({pathname: '/img_mark', query: {item: item}});
     };
     imgChange = (page, pageSize) => {
 
@@ -79,7 +78,7 @@ class MarkList extends Component {
                             <span>{item.ip}</span>
                             <span>{item.name}</span>
                             <Button type="primary"
-                                    onClick={this.onMarkClick}>标注</Button>
+                                    onClick={() => this.onMarkClick(item)}>标注</Button>
                         </div>
                     ))}
                 </div>

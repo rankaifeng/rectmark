@@ -39,6 +39,8 @@ class URLImage extends React.Component {
                 x={this.props.x}
                 y={this.props.y}
                 image={this.state.image}
+                width={700}
+                height={500}
             />
         );
     }

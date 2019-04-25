@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import {Layer, Rect, Stage} from 'react-konva';
 
 import URLImage from './urlimg';
-
-import bgImg from '../../img/bg.jpg';
+import {Button} from 'antd';
 import TransformerComponent from './transformer';
 
 let allData = [];
@@ -47,17 +46,26 @@ class ImgMark extends Component {
 
     changeSize = (item, index, e) => {
         isRect = true;
+
+        console.log("yuan" + JSON.stringify(this.state.rectNumbers));
+
         newData[index].x = e.target.attrs.x;
         newData[index].y = e.target.attrs.y;
+
+        console.log("x" + JSON.stringify(newData));
     };
+
 
     componentDidMount() {
         let _that = this;
+
         document.onmousedown = function (ev) {
             allData = [];
+
             if (isRect) {
                 return;
             }
+            console.log(isRect)
             let e = ev || window.event;
             scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
             scrollY = document.documentElement.scrollTop || document.body.scrollTop;
@@ -79,7 +87,6 @@ class ImgMark extends Component {
                 };
                 newData.push(item);
             }
-            console.log(JSON.stringify(newData))
         };
 
         document.onmousemove = function (ev) {
@@ -110,9 +117,6 @@ class ImgMark extends Component {
         };
     }
 
-    onmouseover = () => {
-        isRect = true;
-    };
 
     onmouseout = () => {
         isRect = false;
@@ -138,18 +142,54 @@ class ImgMark extends Component {
         })
     };
 
-    onTransformStart = (e) => {
-        console.log(e);
-        isRect = true;
-    };
 
     onTransFormend = () => {
         isRect = false;
+        console.log("end")
+    };
+
+    savePosition = () => {
+
+        const {rectNumbers} = this.state;
+        console.log(JSON.stringify(rectNumbers));
+        let submitList = [];
+        if (rectNumbers.length === 0) {
+            alert("暂无数据提交！");
+        } else {
+            for (let i = 0; i < rectNumbers.length; i++) {
+                let rect = rectNumbers[i];
+                let mX = (rect.x) - (rect.width / 2);
+                let mY = (rect.y) - (rect.height / 2);
+
+                let item = {
+                    x: mX,
+                    y: mY,
+                    width: rect.width,
+                    height: rect.height
+                };
+                submitList.push(item);
+            }
+
+            console.log(submitList);
+        }
+
+    };
+
+    rectClick = () => {
+        isRect = true;
     };
 
     render() {
+        let item1 = this.props.location.query.item;
+        let imgUrl = item1.imgUrl;
         return (
-            <div style={{height: '100%'}}>
+            <div style={{
+                width: '100%', height: '500px', display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                padding: '10px'
+            }}>
                 <Stage
                     name="rect"
                     onMouseDown={this.handleStageMouseDown}
@@ -159,7 +199,7 @@ class ImgMark extends Component {
                         <URLImage
                             x={10}
                             y={10}
-                            src={bgImg}/>
+                            src={imgUrl}/>
                         {this.state.rectNumbers.map((item, i) => (
 
                             <Rect
@@ -169,12 +209,12 @@ class ImgMark extends Component {
                                 y={item.y}
                                 draggable
                                 stroke='blue'
+                                onClick={this.rectClick}
                                 strokeWidth={0.5}
                                 width={item.width}
                                 height={item.height}
                                 fill={item.color}
                                 ontransform={this.onTransformStart}
-                                onmouseover={this.onmouseover}
                                 ontransformend={this.onTransFormend}
                                 onmouseout={this.onmouseout}
                                 onDragEnd={(e) => this.changeSize(item, i, e)}
@@ -184,6 +224,7 @@ class ImgMark extends Component {
                             selectedName={this.state.selectedName}/>
                     </Layer>
                 </Stage>
+                <Button type="primary" onClick={this.savePosition}>保存</Button>
             </div>
 
         );
