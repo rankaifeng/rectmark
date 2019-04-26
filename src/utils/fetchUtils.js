@@ -1,8 +1,11 @@
-let baseUrl = "http://192.168.100.137:3000/";
+import {message} from 'antd';
+
+let baseUrl = "http://192.168.100.137:3001/";
+
 
 /* POST 请求 */
 export function httpPost(url, data, callBack) {
-    httpRequest(url, "POST", data, callBack);
+    httpRequest(url, data, "PUT", callBack);
 }
 
 /* GET 请求 */
@@ -19,7 +22,7 @@ function httpRequest(url, data, type, callBack) {
 }
 
 function requestError(error) {
-    alert(error);
+    message.error(error);
 }
 
 function requestSuess(callBack, result) {
@@ -35,7 +38,7 @@ function fetchGetOrPost(url, data, type) {
         mode: "cors",
         headers: addHeaders()
     };
-    if (type === "POST") {
+    if (type === "PUT") {
         fetchData.body = data;
     }
     return fetch(baseUrl + url, fetchData);

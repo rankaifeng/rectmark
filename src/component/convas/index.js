@@ -294,7 +294,7 @@ class Index extends Component {
         c = document.getElementById("myCanvas");
         ctx = c.getContext("2d");
         img = document.createElement('img');
-        img.src = "http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg";
+        img.src = this.props.imgUrl;
         c.style.backgroundImage = "url(" + img.src + ")";
         c.style.border = '1px solid #aeaeae';
         c.width = 700;

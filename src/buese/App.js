@@ -10,8 +10,9 @@ class App extends Component {
         return (
             <HashRouter>
                 <Switch>
-                    <Route path="/" exact component={DrawRect}/>
-                    <Route path="/draw_rect" exact component={MarkList}/>
+                    <Route path="/" exact component={MarkList}/>
+                    <Route path="/mark_list" exact component={MarkList}/>
+                    <Route path="/draw_rect" exact component={DrawRect}/>
                 </Switch>
             </HashRouter>
         );

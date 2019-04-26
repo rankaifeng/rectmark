@@ -39,7 +39,6 @@ class MarkList extends Component {
 
 
     imgChange = (page, pageSize) => {
-
         this.requestImg(page, pageSize);
     };
 
