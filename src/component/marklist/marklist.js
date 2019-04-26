@@ -6,6 +6,7 @@ import four from '../../img/four.jpeg';
 import five from '../../img/five.jpeg';
 import {Button, Pagination} from 'antd';
 import './marklist.css';
+import {httpGet} from "../../utils/fetchUtils";
 
 let imgLists = [{imgUrl: one, id: '1', ip: '192.168.2.1', name: '测试'},
     {imgUrl: two, id: '2', ip: '192.168.2.2', name: '测试'},
@@ -17,54 +18,45 @@ let imgLists = [{imgUrl: one, id: '1', ip: '192.168.2.1', name: '测试'},
     {imgUrl: five, id: '8', ip: '192.168.2.5', name: '测试'},
     {imgUrl: five, id: '9', ip: '192.168.2.5', name: '测试'},
     {imgUrl: five, id: '10', ip: '192.168.2.5', name: '测试'}];
-let chunk = 2;
-let result = [];
+
 
 class MarkList extends Component {
 
     state = {
         current: 1,
-        pageSize: 2,
-        imgArray: []
+        pageSize: 1,
+        imgArray: [],
+        total: 0
     };
 
     componentDidMount() {
-        this.resize();
 
         const {current, pageSize} = this.state;
 
-        this.returnDataList(current, pageSize);
+        this.requestImg(current, pageSize);
     }
 
-    resize = () => {
-
-        for (let i = 0, j = imgLists.length; i < j; i += chunk) {
-            result.push(imgLists.slice(i, i + chunk));
-        }
+    requestImg = (page, per) => {
+        let that = this;
+        httpGet("devices?page=" + page + "&per=" + per,
+            function (response) {
+                that.setState({
+                    imgArray:
+                    response.rows,
+                    current: page,
+                    pageSize: per, total: response.total
+                });
+            });
     };
 
     onMarkClick = (item) => {
         this.props.history.push({pathname: '/img_mark', query: {item: item}});
     };
+
+
     imgChange = (page, pageSize) => {
 
-        this.returnDataList(page, pageSize);
-    };
-
-    returnDataList = (page, pageSize) => {
-
-        let items = [];
-
-
-        for (let i = 0; i < result[page - 1].length; i++) {
-            items.push(result[page - 1][i]);
-        }
-
-        this.setState({
-            imgArray: items,
-            current: page,
-            pageSize: pageSize
-        });
+        this.requestImg(page, pageSize);
     };
 
     render() {
@@ -73,10 +65,10 @@ class MarkList extends Component {
                 <div className="content">
                     {this.state.imgArray.map((item, i) => (
                         <div key={i} className={i === 0 ? "content_item" : "item_border content_item"}>
-                            <img alt="" src={item.imgUrl}/>
+                            <img alt="" src={item.picture}/>
                             <span>{item.id}</span>
-                            <span>{item.ip}</span>
-                            <span>{item.name}</span>
+                            {/*<span>{item.ip}</span>*/}
+                            {/*<span>{item.name}</span>*/}
                             <Button type="primary"
                                     onClick={() => this.onMarkClick(item)}>标注</Button>
                         </div>
@@ -87,7 +79,7 @@ class MarkList extends Component {
                         onChange={this.imgChange}
                         current={this.state.current}
                         pageSize={this.state.pageSize}
-                        total={imgLists.length}/>
+                        total={this.state.total}/>
                 </div>
             </div>
         );
