@@ -31,22 +31,10 @@ class URLImage extends React.Component {
             image: this.image
         });
     };
-    onmousedown=(ev)=>{
-        this.props.onmousedown(ev.evt)
-    };
 
-    onmousemove=(ev)=>{
-        this.props.onmousemove(ev.evt)
-    };
-    onmouseup=()=>{
-        this.props.onmouseup()
-    };
     render() {
         return (
             <Image
-                onMouseDown={this.onmousedown}
-                onMouseMove={this.onmousemove}
-                onMouseUp={this.onmouseup}
                 name={this.props.name}
                 x={this.props.x}
                 y={this.props.y}

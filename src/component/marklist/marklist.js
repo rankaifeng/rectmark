@@ -1,23 +1,7 @@
 import React, {Component} from 'react';
-import one from '../../img/one.jpeg';
-import two from '../../img/two.jpeg';
-import three from '../../img/three.jpeg';
-import four from '../../img/four.jpeg';
-import five from '../../img/five.jpeg';
 import {Button, Pagination} from 'antd';
 import './marklist.css';
 import {httpGet} from "../../utils/fetchUtils";
-
-let imgLists = [{imgUrl: one, id: '1', ip: '192.168.2.1', name: '测试'},
-    {imgUrl: two, id: '2', ip: '192.168.2.2', name: '测试'},
-    {imgUrl: three, id: '3', ip: '192.168.2.3', name: '测试'},
-    {imgUrl: four, id: '4', ip: '192.168.2.4', name: '测试'},
-    {imgUrl: five, id: '5', ip: '192.168.2.5', name: '测试'},
-    {imgUrl: five, id: '6', ip: '192.168.2.5', name: '测试'},
-    {imgUrl: five, id: '7', ip: '192.168.2.5', name: '测试'},
-    {imgUrl: five, id: '8', ip: '192.168.2.5', name: '测试'},
-    {imgUrl: five, id: '9', ip: '192.168.2.5', name: '测试'},
-    {imgUrl: five, id: '10', ip: '192.168.2.5', name: '测试'}];
 
 
 class MarkList extends Component {
@@ -50,7 +34,7 @@ class MarkList extends Component {
     };
 
     onMarkClick = (item) => {
-        this.props.history.push({pathname: '/img_mark', query: {item: item}});
+        this.props.history.push({pathname: '/draw_rect', query: {item: item}});
     };
 
 

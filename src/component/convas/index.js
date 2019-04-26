@@ -17,7 +17,7 @@ let startx,//起始x坐标
     type = 0;
 let layers = [];//图层
 let currentR;//当前点击的矩形框
-class Test extends Component {
+class Index extends Component {
 
     resizeLeft = (rect) => {
         c.style.cursor = "w-resize";
@@ -288,8 +288,6 @@ class Test extends Component {
         flag = 0;
         this.reshow(x, y);
         op = 0;
-
-        console.log(layers);
     };
 
     componentDidMount() {
@@ -307,6 +305,10 @@ class Test extends Component {
         c.onmouseup = this.mouseup;
     }
 
+    onSavePosition = () => {
+        this.props.onSavePosition(layers);
+    };
+
     render() {
         return (
             <div>
@@ -320,13 +322,12 @@ class Test extends Component {
                             onClick={this.btnEmpty}>清空</Button>
                     <Button type="primary"
                             style={{marginLeft: '10px'}}
-                            onClick={this.savePosition}>保存</Button>
+                            onClick={this.onSavePosition}>保存</Button>
                 </div>
             </div>
-
 
         );
     }
 }
 
-export default Test;
+export default Index;

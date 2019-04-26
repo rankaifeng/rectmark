@@ -4,7 +4,7 @@ import {Layer, Rect, Stage} from 'react-konva';
 import URLImage from './urlimg';
 import {Button} from 'antd';
 import TransformerComponent from './transformer';
-import imgBg from '../../img/bg.jpg'
+import bgImg from '../../img/bg.jpg';
 
 let allData = [];
 
@@ -60,7 +60,52 @@ class ImgMark extends Component {
     componentDidMount() {
         let _that = this;
 
+        document.onmousedown = function (ev) {
+            allData = [];
 
+            if (isRect) {
+                return;
+            }
+            console.log(isRect)
+            let e = ev || window.event;
+            scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+            scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+            startX = e.pageX || e.clientX + scrollX;
+            startY = e.pageY || e.clientY + scrollY;
+            drag = true;
+        };
+
+        document.onmouseup = function (ev) {
+            drag = false;
+
+            if (allData.length > 0) {
+                let item = {
+                    x: allData[0].x,
+                    y: allData[0].y,
+                    width: allData[0].width,
+                    height: allData[0].height,
+                    color: allData[0].color
+                };
+                newData.push(item);
+            }
+        };
+
+        document.onmousemove = function (ev) {
+            if (isRect) {
+                return;
+            }
+            if (drag) {
+                let width = (ev.pageX - scrollX) - startX;
+                let height = (ev.pageY - scrollY) - startY;
+                data.x = startX;
+                data.y = startY;
+                data.width = width;
+                data.height = height;
+                data.color = "rgba(255,255,255,0.3)";
+                allData.push(data);
+                _that.showLine(allData);
+            }
+        };
         //监听esc事件 取消
         document.onkeydown = function (event) {
             let e = event || window.event;
@@ -72,49 +117,8 @@ class ImgMark extends Component {
             }
         };
     }
-    onmousedown=(ev)=>{
-        allData = [];
 
-        if (isRect) {
-            return;
-        }
-        console.log(isRect)
-        let e = ev || window.event;
-        startX = e.pageX
-        startY = e.pageY;
-        drag = true;
-    };
 
-    onmousemove=(ev)=>{
-        if (isRect) {
-            return;
-        }
-        if (drag) {
-            let width = ev.pageX  - startX;
-            let height = ev.pageY - startY;
-            data.x = startX;
-            data.y = startY;
-            data.width = width;
-            data.height = height;
-            data.color = "rgba(255,255,255,0.3)";
-            allData.push(data);
-            this.showLine(allData);
-        }
-    };
-    onmouseup=()=>{
-        drag = false;
-
-        if (allData.length > 0) {
-            let item = {
-                x: allData[0].x,
-                y: allData[0].y,
-                width: allData[0].width,
-                height: allData[0].height,
-                color: allData[0].color
-            };
-            newData.push(item);
-        }
-    };
     onmouseout = () => {
         isRect = false;
     };
@@ -194,13 +198,9 @@ class ImgMark extends Component {
                     height={window.innerHeight}>
                     <Layer>
                         <URLImage
-                            onmousedown={this.onmousedown}
-                            onmousemove={this.onmousemove}
-                            onmouseup={this.onmouseup}
                             x={10}
                             y={10}
-
-                            src={imgBg}/>
+                            src={bgImg}/>
                         {this.state.rectNumbers.map((item, i) => (
 
                             <Rect
