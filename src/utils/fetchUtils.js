@@ -2,10 +2,9 @@ import {message} from 'antd';
 
 let baseUrl = "http://192.168.100.137:3001/";
 
-
 /* POST 请求 */
 export function httpPost(url, data, callBack) {
-    httpRequest(url, data, "PUT", callBack);
+    httpRequest(url, data, 'PUT', callBack);
 }
 
 /* GET 请求 */
@@ -26,9 +25,7 @@ function requestError(error) {
 }
 
 function requestSuess(callBack, result) {
-    setTimeout(() => {
-        return callBack(result);
-    }, 3000);
+    callBack(result.data);
 }
 
 /* 用于判断是get请求还是post 因为默认get请求是没有body参数的 */
@@ -39,15 +36,14 @@ function fetchGetOrPost(url, data, type) {
         headers: addHeaders()
     };
     if (type === "PUT") {
-        fetchData.body = data;
+        fetchData.body = JSON.stringify(data);
     }
-    return fetch(baseUrl + url, fetchData);
+    return fetch(`${baseUrl}${url}`, fetchData);
 }
 
 /* 添加header头部信息 */
 function addHeaders() {
-    let headers = {
+    return {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
     };
-    return headers;
 }

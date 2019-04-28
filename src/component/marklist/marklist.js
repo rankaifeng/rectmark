@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Pagination} from 'antd';
+import {httpGet} from '../../utils/fetchUtils';
 import './marklist.css';
-import {httpGet} from "../../utils/fetchUtils";
-
 
 class MarkList extends Component {
 
@@ -22,6 +21,8 @@ class MarkList extends Component {
 
     requestImg = (page, per) => {
         let that = this;
+
+
         httpGet("devices?page=" + page + "&per=" + per,
             function (response) {
                 that.setState({
