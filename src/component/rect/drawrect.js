@@ -60,7 +60,7 @@ class DrawRect extends Component {
         return (
             <MyDrawRect
 
-                imgUrl={imgUrl}
+                imgUrl="https://raw.githubusercontent.com/rankaifeng/rectmark/master/bg.jpg"
 
                 onSavePosition={this.onSavePosition}
             />
