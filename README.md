@@ -15,4 +15,4 @@
 ### `npm run eject`
 当然你也可以看到npm的全部配置信息！
 
-![ALT text]("http://pic31.nipic.com/20130804/7487939_090818211000_2.jpg")
+![ALT text](https://raw.githubusercontent.com/rankaifeng/rectmark/master/WeChat8c671f8b2a5f8d625a1a25c691ac3d9d.png)
