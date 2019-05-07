@@ -143,6 +143,7 @@ class Index extends Component {
         layers.forEach(item => {
             ctx.beginPath();
             ctx.rect(item.x1, item.y1, item.width, item.height);
+
             ctx.strokeStyle = item.strokeStyle;
             if (x >= (item.x1 - 25 / scale)
                 && x <= (item.x1 + 25 / scale)
@@ -310,15 +311,16 @@ class Index extends Component {
     };
 
     render() {
+
         return (
             <div>
                 <canvas id="myCanvas"/>
                 <div>
                     <Button type="primary"
-                            style={{marginLeft: '10px'}}
+                            style={{marginLeft: '10px', display: 'none'}}
                             onClick={this.btnUndo}>撤销</Button>
                     <Button type="primary"
-                            style={{marginLeft: '10px'}}
+                            style={{marginLeft: '10px', display: 'none'}}
                             onClick={this.btnEmpty}>清空</Button>
                     <Button type="primary"
                             style={{marginLeft: '10px'}}

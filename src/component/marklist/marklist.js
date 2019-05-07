@@ -35,7 +35,7 @@ class MarkList extends Component {
     };
 
     onMarkClick = (item) => {
-        this.props.history.push({pathname: '/draw_rect', query: {item: item}});
+        this.props.history.push({pathname: '/draw_rect', query: {item: item, type: 'arc'}});
     };
 
 

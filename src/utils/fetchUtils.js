@@ -21,7 +21,7 @@ function httpRequest(url, data, type, callBack) {
 }
 
 function requestError(error) {
-    message.error(error);
+    alert("连接服务器失败！");
 }
 
 function requestSuess(callBack, result) {

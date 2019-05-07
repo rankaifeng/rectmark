@@ -1,9 +1,15 @@
 import React, {Component} from 'react';
-import MyDrawRect from "../convas";
-import {message} from 'antd';
+import MyDrawRect from "../convas/index";
+import {Button, message} from 'antd';
 import axIos from 'axios'
+import DrawArc from "./drawarc";
 
 class DrawRect extends Component {
+
+
+    state = {
+        type: 'other'
+    };
 
 
     onSavePosition = (subPosition) => {
@@ -53,17 +59,68 @@ class DrawRect extends Component {
             });
     };
 
+
+    clickCircle = () => {
+
+        this.setState({type: 'arc'})
+    };
+
+    clickRect = () => {
+        this.setState({type: 'rect'})
+    };
+
     render() {
 
-        let imgUrl = this.props.location.query.item.picture;
+        let item = this.props.location.query;
 
-        return (
-            <MyDrawRect
 
-                imgUrl="https://raw.githubusercontent.com/rankaifeng/rectmark/master/bg.jpg"
+        let showHtml = "";
 
+        if (this.state.type === "arc") {
+
+            showHtml = <DrawArc
+                onSavePosition={this.onSavePosition}
+                imgUrl={item.item.picture}/>
+
+        } else if (this.state.type === 'rect') {
+
+            showHtml = <MyDrawRect
+                imgUrl={item.item.picture}
                 onSavePosition={this.onSavePosition}
             />
+
+        } else {
+
+            showHtml = <img alt='' src={item.item.picture}
+                            style={{width: '700px', height: '500px'}}/>
+        }
+
+        return (
+
+            <div>
+
+                {showHtml}
+
+                <div style={{
+                    position: 'absolute', border: '1px solid #dcd8d8',
+                    width: '80px',
+                    height: '500px',
+                    top: 0,
+                    left: '700px',
+                    textAlign: 'center'
+                }}>
+                    <Button type="primary"
+                            style={{marginTop: '10px'}}
+                            onClick={this.clickCircle}>圆形</Button>
+
+                    <Button type="primary"
+                            style={{marginTop: '10px'}}
+                            onClick={this.clickRect}>矩形</Button>
+                </div>
+
+
+            </div>
+
         );
     }
 }
