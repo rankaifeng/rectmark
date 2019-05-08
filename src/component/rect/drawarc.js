@@ -12,7 +12,7 @@ let startx,//起始x坐标
     y,
     leftDistance,
     topDistance,
-    op = 0,//op操作类型 0 无操作 1 画矩形框 2 拖动矩形框
+    arc = 0,//op操作类型 0 无操作 1 画矩形框 2 拖动矩形框
     scale = 1;
 let layers = [];//图层
 let currentR;//当前点击的矩形框
@@ -56,7 +56,7 @@ class DrawArc extends Component {
         c.style.cursor = "default";
         ctx.clearRect(0, 0, elementWidth, elementHeight);
         radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
-        if (flag && op === 1) {
+        if (flag && arc === 1) {
             ctx.beginPath();
             ctx.strokeStyle = "#0000ff";
             ctx.arc(startx, starty, radii, 0, Math.PI * 2); // 第5个参数默认是false-顺时针
@@ -66,32 +66,29 @@ class DrawArc extends Component {
         this.reshow(x, y);
     };
     mouseup = (e) => {
-        if (op === 1) {
+        if (arc === 1) {
             layers.push(this.fixPosition({
                 x1: startx,
                 y1: starty,
                 radii: radii,
                 strokeStyle: '#0000ff',
             }))
-        } else if (op >= 3) {
+        } else if (arc >= 3) {
             this.fixPosition(currentR)
         }
         currentR = null;
         flag = 0;
         this.reshow(x, y);
-        op = 0;
-
-
-        console.log(layers)
+        arc = 0;
     };
 
 
     resizeLT = (rect) => {
         c.style.cursor = "move";
-        if (flag && op === 0) {
-            op = 7;
+        if (flag && arc === 0) {
+            arc = 7;
         }
-        if (flag && op === 7) {
+        if (flag && arc === 7) {
             if (!currentR) {
                 currentR = rect
             }
@@ -119,8 +116,8 @@ class DrawArc extends Component {
             ctx.stroke();
         });
 
-        if (flag && allNotIn && op < 3) {
-            op = 1
+        if (flag && allNotIn && arc < 3) {
+            arc = 1
         }
 
     };
@@ -155,7 +152,7 @@ class DrawArc extends Component {
         return position
     };
     onSavePosition = () => {
-        this.props.onSavePosition(layers);
+        this.props.onSavePosition("arc", layers);
     };
 
     render() {

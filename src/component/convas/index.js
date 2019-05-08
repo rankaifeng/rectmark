@@ -307,7 +307,7 @@ class Index extends Component {
     }
 
     onSavePosition = () => {
-        this.props.onSavePosition(layers);
+        this.props.onSavePosition("rect", layers);
     };
 
     render() {
@@ -325,6 +325,14 @@ class Index extends Component {
                     <Button type="primary"
                             style={{marginLeft: '10px'}}
                             onClick={this.onSavePosition}>保存</Button>
+
+                    <Button type="primary"
+                            style={{marginTop: '10px'}}
+                            onClick={this.clickCircle}>圆形</Button>
+
+                    <Button type="primary"
+                            style={{marginTop: '10px'}}
+                            onClick={this.clickRect}>矩形</Button>
                 </div>
             </div>
 
