@@ -54,7 +54,7 @@ class DrawArc extends Component {
         ctx.save();
         ctx.setLineDash([5]);
         c.style.cursor = "default";
-        ctx.clearRect(0, 0, elementWidth, elementHeight);
+        // ctx.clearRect(0, 0, elementWidth, elementHeight);
         radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
         if (flag && arc === 1) {
             ctx.beginPath();
