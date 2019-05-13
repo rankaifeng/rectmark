@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Button} from 'antd';
+import React, { Component } from 'react';
+import { Button, message } from 'antd';
 
 let c;
 let ctx, img;
@@ -21,6 +21,9 @@ let currentR;//当前点击的矩形框
 let arc = 0;//op操作类型 0 无操作 1 圆 2 拖动圆
 let radii;
 let mType;
+
+let reqData = [];
+let reqDataItem = {};
 
 class Index extends Component {
 
@@ -275,7 +278,6 @@ class Index extends Component {
         this.reshow();
     };
     mousedown = (e) => {
-        console.log(JSON.stringify(e))
         startx = (e.pageX - c.offsetLeft + c.parentElement.scrollLeft) / scale;
         starty = (e.pageY - c.offsetTop + c.parentElement.scrollTop) / scale;
         currentR = this.isPointInRetc(startx, starty);
@@ -292,25 +294,30 @@ class Index extends Component {
         flag = 1;
     };
     mousemove = (e) => {
-
-        console.log("react" + e.target);
         x = (e.pageX - c.offsetLeft + c.parentElement.scrollLeft) / scale;
         y = (e.pageY - c.offsetTop + c.parentElement.scrollTop) / scale;
         ctx.save();
         ctx.setLineDash([5]);
         c.style.cursor = "default";
-        ctx.clearRect(0, 0, c.width, c.height);
         if (mType === 'arc') {
+            for (let i = 0; i < layers.length; i++) {
+                ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
+            }
 
             radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
             if (flag && arc === 1) {
-
                 ctx.beginPath();
                 ctx.strokeStyle = "#0000ff";
                 ctx.arc(startx, starty, radii, 0, Math.PI * 2); // 第5个参数默认是false-顺时针
                 ctx.stroke();
             }
         } else {
+
+
+            ctx.clearRect(startx, starty, c.width, c.height);
+
+
+
 
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
@@ -320,22 +327,20 @@ class Index extends Component {
         ctx.restore();
         this.reshow(x, y);
     };
-    mouseup = (e) => {
 
+
+    mouseup = (e) => {
         if (mType === 'arc') {
-            // ctx.clearRect(0, 0, elementWidth, elementHeight);
             if (arc === 1) {
                 aLayers.push(this.fixPosition({
                     x1: startx,
                     y1: starty,
                     radii: radii,
-                    strokeStyle: '#0000ff',
+                    strokeStyle: 'green',
                 }))
             } else if (arc >= 3) {
                 this.fixPosition(currentR)
             }
-
-
         } else {
             if (op === 1) {
                 layers.push(this.fixPosition({
@@ -361,55 +366,114 @@ class Index extends Component {
     componentDidMount() {
         c = document.getElementById("myCanvas");
         ctx = c.getContext("2d");
+        ctx.strokeWidth = 1;
         img = document.createElement('img');
-        img.src = this.props.imgUrl;
+        if (this.props.location.query != null) {
+            let item = this.props.location.query;
+            img.src = item.item.picture;
+        }
         c.style.backgroundImage = "url(" + img.src + ")";
         c.style.border = '1px solid #aeaeae';
         c.width = 700;
         c.height = 500;
         c.style.backgroundSize = `${c.offsetWidth}px ${c.offsetHeight}px`;
-        c.onmousedown = this.mousedown;
-        c.onmousemove = this.mousemove;
-        c.onmouseup = this.mouseup;
     }
 
     onSavePosition = () => {
-        this.props.onSavePosition("rect", layers);
+        if (layers.length === 0 && aLayers.length === 0) {
+            message.warning("暂无数据提交！");
+            return;
+        }
+
+        for (let i = 0; i < layers.length; i++) {
+            let rect = layers[i];
+
+            reqData.push(rect);
+        }
+        for (let i = 0; i < reqData.length; i++) {
+
+            let mArc = [];
+
+            for (let j = 0; j < aLayers.length; j++) {
+                if (aLayers[j].x1 >= reqData[i].x1
+                    && aLayers[j].x1 <= reqData[i].x1 + reqData[i].width
+                    && aLayers[j].y1 >= reqData[i].y1 && aLayers[j].y1
+                    <= reqData[i].y1 + reqData[i].height) {
+
+                    mArc.push(aLayers[j]);
+                    // reqDataItem.arc = mArc;
+                    reqData[i].arc = mArc;
+                }
+            }
+        }
+        reqDataItem.data = reqData;
+        console.log(JSON.stringify(reqDataItem));
+        // this.props.onSavePosition("rect", layers);
     };
 
 
     clickCircle = () => {
-
-        mType = "arc";
+        // for (let i = 0; i < layers.length; i++) {
+        //     if (startx >= layers[i].x1
+        //         && startx <= layers[i].x1 + layers[i].width
+        //         && starty >= layers[i].y1 && starty
+        //         <= layers[i].y1 + layers[i].height) {
+        //         console.log("4")
+        //     } else {
+        //         return;
+        //     }
+        // }
+        this.changeEvent('arc');
     };
 
     clickRect = () => {
-        mType = 'ract';
+
+        this.changeEvent('rect');
+    };
+
+
+    changeEvent = (type) => {
+        c.onmousedown = this.mousedown;
+        c.onmousemove = this.mousemove;
+        c.onmouseup = this.mouseup;
+        mType = type;
     };
 
     render() {
 
         return (
             <div>
-                <canvas id="myCanvas"/>
+                <canvas id="myCanvas" />
                 <div>
                     <Button type="primary"
-                            style={{marginLeft: '10px', display: 'none'}}
-                            onClick={this.btnUndo}>撤销</Button>
+                        style={{ marginLeft: '10px', display: 'none' }}
+                        onClick={this.btnUndo}>撤销</Button>
                     <Button type="primary"
-                            style={{marginLeft: '10px', display: 'none'}}
-                            onClick={this.btnEmpty}>清空</Button>
-                    <Button type="primary"
-                            style={{marginLeft: '10px'}}
-                            onClick={this.onSavePosition}>保存</Button>
+                        style={{ marginLeft: '10px', display: 'none' }}
+                        onClick={this.btnEmpty}>清空</Button>
 
-                    <Button type="primary"
-                            style={{marginTop: '10px'}}
+
+                    <div style={{
+                        position: 'absolute', border: '1px solid #dcd8d8',
+                        width: '80px',
+                        height: '500px',
+                        top: 0,
+                        left: '700px',
+                        textAlign: 'center'
+                    }}>
+                        <Button type="primary"
+                            style={{ marginTop: '10px' }}
                             onClick={this.clickCircle}>圆形</Button>
 
-                    <Button type="primary"
-                            style={{marginTop: '10px'}}
+                        <Button type="primary"
+                            style={{ marginTop: '10px' }}
                             onClick={this.clickRect}>矩形</Button>
+
+
+                        <Button type="primary"
+                            style={{ position: 'absolute', left: 7, bottom: 10 }}
+                            onClick={this.onSavePosition}>保存</Button>
+                    </div>
                 </div>
             </div>
 

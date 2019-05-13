@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {HashRouter, Route, Switch} from "react-router-dom";
 import MarkList from '../component/marklist/marklist';
-import DrawRect from '../component/rect/drawrect';
+import DrawRect from '../component/convas';
 import 'antd/dist/antd.css';
 import '../css/App.css';
 
@@ -11,7 +11,7 @@ class App extends Component {
             <HashRouter>
                 <Switch>
                     <Route path="/" exact component={MarkList}/>
-                    <Route path="/draw_rect" exact component={DrawRect}/>
+                    <Route path="/draw_rect" component={DrawRect}/>
                 </Switch>
             </HashRouter>
         );
