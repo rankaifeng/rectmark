@@ -336,7 +336,7 @@ class Index extends Component {
             }
         } else {
             
-                ctx.clearRect(startx, starty, c.width, c.height);
+                ctx.clearRect(0, 0, c.width, c.height);
             
            
             
