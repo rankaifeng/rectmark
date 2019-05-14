@@ -16,4 +16,8 @@
 当然你也可以看到npm的全部配置信息！
 
 ### `项目截图`
+<<<<<<< HEAD
 ![](https://raw.githubusercontent.com/rankaifeng/rectmark/master/WeChat8c671f8b2a5f8d625a1a25c691ac3d9d.png)
+=======
+![ALT text](https://raw.githubusercontent.com/rankaifeng/rectmark/master/WeChat8c671f8b2a5f8d625a1a25c691ac3d9d.png)
+>>>>>>> 4a72888b48433bd02c60ed41b6ae2ef829ecef8a
