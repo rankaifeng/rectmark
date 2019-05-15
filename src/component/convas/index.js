@@ -85,8 +85,7 @@ class Index extends Component {
     };
 
     resizeLT = (rect) => {
-        c.style.cursor = "se-resize";
-
+        c.style.cursor = "move";
         if (flag && op === 0) {
             op = 7;
         }
@@ -94,6 +93,7 @@ class Index extends Component {
             if (!currentR) {
                 currentR = rect
             }
+
             currentR.x1 = x;
             currentR.y1 = y;
             currentR.height = currentR.y2 - currentR.y1;
@@ -140,10 +140,10 @@ class Index extends Component {
             if (!currentR) {
                 currentR = rect
             }
-            currentR.x2 = x;
-            currentR.y1 = y;
-            currentR.height = currentR.y2 - currentR.y1;
-            currentR.width = currentR.x2 - currentR.x1;
+            // currentR.x2 = x;
+            // currentR.y1 = y;
+            // currentR.height = currentR.y2 - currentR.y1;
+            // currentR.width = currentR.x2 - currentR.x1;
         }
     };
 
@@ -151,16 +151,15 @@ class Index extends Component {
         let allNotIn = 1;
         if (mType === 'arc') {
             aLayers.forEach(item => {
-                ctx.strokeStyle = item.strokeStyle;
                 ctx.beginPath();
                 ctx.arc(item.x1, item.y1, item.radii, 0, Math.PI * 2); // 第5个参数默认是false-顺时针
 
                 ctx.strokeStyle = item.strokeStyle;
 
-                // if (ctx.isPointInPath(x * scale, y * scale)) {
-                //     this.resizeLT(item);
-                //     allNotIn = 0;
-                // }
+                if (ctx.isPointInPath(x * scale, y * scale)) {
+                    this.resizeLT(item);
+                    allNotIn = 0;
+                }
                 ctx.stroke();
             });
             if (flag && allNotIn && arc < 3) {
@@ -308,7 +307,7 @@ class Index extends Component {
                 if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
                     && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
                     radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
-
+                    console.log("举行" + JSON.stringify(layers[i]));
                     //为了计算拖动的时候圆的半径不能大于锯形 
                     //1.先计算圆点坐标到锯形四条边的距离
                     //2.然后根据四条边中的最小距离跟半径对比 如果大于或者等于了最小的边 就说明超出了
@@ -316,7 +315,6 @@ class Index extends Component {
                     let left = startx - layers[i].x1;
                     let right = layers[i].x2 - startx;
                     let bottom = layers[i].y2 - starty;
-
                     numbers.push(top);
                     numbers.push(left);
                     numbers.push(right);
@@ -335,11 +333,14 @@ class Index extends Component {
                 }
             }
         } else {
-            
-                ctx.clearRect(0, 0, c.width, c.height);
-            
+
+            // for (let i = 0; i < layers.length; i++) {
+            //     ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
+            // }
            
-            
+           
+                ctx.clearRect(0, 0, c.width, c.height);
+           
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
             }
@@ -386,7 +387,7 @@ class Index extends Component {
         currentR = null;
         flag = 0;
         this.reshow(x, y);
-
+        console.log(layers.length)
     };
 
     componentDidMount() {
