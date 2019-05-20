@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {Button, Pagination} from 'antd';
-import {httpGet} from '../../utils/fetchUtils';
+import React, { Component } from 'react';
+import { Button, Pagination } from 'antd';
+import { httpGet } from '../../utils/fetchUtils';
 import './marklist.css';
 
 class MarkList extends Component {
@@ -14,7 +14,7 @@ class MarkList extends Component {
 
     componentDidMount() {
 
-        const {current, pageSize} = this.state;
+        const { current, pageSize } = this.state;
 
         this.requestImg(current, pageSize);
     }
@@ -27,7 +27,7 @@ class MarkList extends Component {
             function (response) {
                 that.setState({
                     imgArray:
-                    response.rows,
+                        response.rows,
                     current: page,
                     pageSize: per, total: response.total
                 });
@@ -35,7 +35,7 @@ class MarkList extends Component {
     };
 
     onMarkClick = (item) => {
-        this.props.history.push({pathname: '/draw_rect', query: {item: item, type: 'arc'}});
+        this.props.history.push({ pathname: '/draw_rect', query: { item: item, type: 'arc' } });
     };
 
 
@@ -49,12 +49,12 @@ class MarkList extends Component {
                 <div className="content">
                     {this.state.imgArray.map((item, i) => (
                         <div key={i} className={i === 0 ? "content_item" : "item_border content_item"}>
-                            <img alt="" src={item.picture}/>
+                            <img alt="" src={item.picture} />
                             <span>{item.id}</span>
                             {/*<span>{item.ip}</span>*/}
                             {/*<span>{item.name}</span>*/}
                             <Button type="primary"
-                                    onClick={() => this.onMarkClick(item)}>标注</Button>
+                                onClick={() => this.onMarkClick(item)}>标注</Button>
                         </div>
                     ))}
                 </div>
@@ -63,7 +63,7 @@ class MarkList extends Component {
                         onChange={this.imgChange}
                         current={this.state.current}
                         pageSize={this.state.pageSize}
-                        total={this.state.total}/>
+                        total={this.state.total} />
                 </div>
             </div>
         );
