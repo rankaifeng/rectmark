@@ -14,19 +14,16 @@ let startx,//起始x坐标
     topDistance,
     op = 0,//op操作类型 0 无操作 1 画矩形框 2 拖动矩形框
     scale = 1,
-    type = 0;
-let layers = [];//图层
-let aLayers = [];//图层
-let currentR;//当前点击的矩形框
-let arc = 0;//op操作类型 0 无操作 1 圆 2 拖动圆
-let radii;
-let mType;
-
+    type = 0,
+    layers = [],//图层
+    aLayers = [],//图层
+    currentR,//当前点击的矩形框
+    arc = 0,//op操作类型 0 无操作 1 圆 2 拖动圆
+    radii,
+    mType;
+var url = ''; // canvas图片的二进制格式转为dataURL格式
 let reqData = [];
-
 class Index extends Component {
-
-
     resizeLeft = (rect) => {
         c.style.cursor = "w-resize";
         if (flag && op === 0) {
@@ -85,7 +82,7 @@ class Index extends Component {
     };
 
     resizeLT = (rect) => {
-        c.style.cursor = "move";
+        // c.style.cursor = "move";
         if (flag && op === 0) {
             op = 7;
         }
@@ -94,10 +91,10 @@ class Index extends Component {
                 currentR = rect
             }
 
-            currentR.x1 = x;
-            currentR.y1 = y;
-            currentR.height = currentR.y2 - currentR.y1;
-            currentR.width = currentR.x2 - currentR.x1;
+            // currentR.x1 = x;
+            // currentR.y1 = y;
+            // currentR.height = currentR.y2 - currentR.y1;
+            // currentR.width = currentR.x2 - currentR.x1;
         }
     };
 
@@ -153,7 +150,6 @@ class Index extends Component {
             aLayers.forEach(item => {
                 ctx.beginPath();
                 ctx.arc(item.x1, item.y1, item.radii, 0, Math.PI * 2); // 第5个参数默认是false-顺时针
-
                 ctx.strokeStyle = item.strokeStyle;
 
                 if (ctx.isPointInPath(x * scale, y * scale)) {
@@ -169,14 +165,13 @@ class Index extends Component {
             layers.forEach(item => {
                 ctx.beginPath();
                 ctx.rect(item.x1, item.y1, item.width, item.height);
-
                 ctx.strokeStyle = item.strokeStyle;
                 if (x >= (item.x1 - 25 / scale)
-                    && x <= (item.x1 + 25 / scale)
+                    && x <= (item.x1 + 10 / scale)
                     && y <= (item.y2 - 25 / scale) && y >= (item.y1 + 25 / scale)) {
                     this.resizeLeft(item);
                 } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 25 / scale)
+                    && x <= (item.x2 + 10 / scale)
                     && y <= (item.y2 - 25 / scale) && y >= (item.y1 + 25 / scale)) {
                     this.resizeWidth(item);
                 } else if (y >= (item.y1 - 25 / scale)
@@ -188,11 +183,11 @@ class Index extends Component {
                     && x <= (item.x2 - 25 / scale) && x >= (item.x1 + 25 / scale)) {
                     this.resizeHeight(item);
                 } else if (x >= (item.x1 - 25 / scale)
-                    && x <= (item.x1 + 25 / scale)
+                    && x <= (item.x1 + 10 / scale)
                     && y <= (item.y1 + 25 / scale) && y >= (item.y1 - 25 / scale)) {
                     this.resizeLT(item);
                 } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 25 / scale)
+                    && x <= (item.x2 + 10 / scale)
                     && y <= (item.y2 + 25 / scale)
                     && y >= (item.y2 - 25 / scale)) {
                     this.resizeWH(item);
@@ -201,7 +196,7 @@ class Index extends Component {
                     && y <= (item.y2 + 25 / scale) && y >= (item.y2 - 25 / scale)) {
                     this.resizeLH(item);
                 } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 25 / scale)
+                    && x <= (item.x2 + 10 / scale)
                     && y <= (item.y1 + 25 / scale) && y >= (item.y1 - 25 / scale)) {
                     this.resizeWT(item);
                 }
@@ -287,7 +282,7 @@ class Index extends Component {
             topDistance = starty - currentR.y1;
         }
         if (mType === 'arc') {
-            ctx.strokeStyle = "#ff2ad7";
+            ctx.strokeStyle = "#0000ff";
         } else {
             ctx.strokeStyle = "#0000ff";
             ctx.strokeRect(x, y, 0, 0);
@@ -297,9 +292,10 @@ class Index extends Component {
     mousemove = (e) => {
         x = (e.pageX - c.offsetLeft + c.parentElement.scrollLeft) / scale;
         y = (e.pageY - c.offsetTop + c.parentElement.scrollTop) / scale;
-        ctx.save();
+        // ctx.save();
         // ctx.setLineDash([5]);
         c.style.cursor = "default";
+        
         if (mType === 'arc') {
             for (let i = 0; i < layers.length; i++) {
                 let numbers = [];
@@ -307,7 +303,6 @@ class Index extends Component {
                 if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
                     && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
                     radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
-                    console.log("举行" + JSON.stringify(layers[i]));
                     //为了计算拖动的时候圆的半径不能大于锯形 
                     //1.先计算圆点坐标到锯形四条边的距离
                     //2.然后根据四条边中的最小距离跟半径对比 如果大于或者等于了最小的边 就说明超出了
@@ -333,14 +328,8 @@ class Index extends Component {
                 }
             }
         } else {
-
-            // for (let i = 0; i < layers.length; i++) {
-            //     ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
-            // }
-           
-           
-                ctx.clearRect(0, 0, c.width, c.height);
-           
+            ctx.clearRect(0, 0, c.width, c.height);
+            this.loadImage();
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
             }
@@ -352,6 +341,7 @@ class Index extends Component {
 
     mouseup = (e) => {
         if (mType === 'arc') {
+            url = c.toDataURL();
             for (let i = 0; i < layers.length; i++) {
                 ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
                 if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
@@ -361,7 +351,7 @@ class Index extends Component {
                             x1: startx,
                             y1: starty,
                             radii: radii,
-                            strokeStyle: 'green',
+                            strokeStyle: '#0000ff',
                         }))
                     } else if (arc >= 3) {
                         this.fixPosition(currentR)
@@ -386,11 +376,12 @@ class Index extends Component {
         arc = 0;
         currentR = null;
         flag = 0;
+        ctx.save();
         this.reshow(x, y);
-        console.log(layers.length)
     };
 
     componentDidMount() {
+
         c = document.getElementById("myCanvas");
         ctx = c.getContext("2d");
         ctx.strokeWidth = 1;
@@ -405,7 +396,11 @@ class Index extends Component {
         c.height = 2008;
         c.style.backgroundSize = `${c.offsetWidth}px ${c.offsetHeight}px`;
     }
-
+    loadImage() {
+        var img = new Image();
+        img.src = url;
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+    }
     onSavePosition = () => {
         if (layers.length === 0 && aLayers.length === 0) {
             message.warning("暂无数据提交！");
@@ -485,7 +480,6 @@ class Index extends Component {
 
 
 
-
         this.changeEvent('arc');
     };
 
@@ -499,6 +493,7 @@ class Index extends Component {
         c.onmousedown = this.mousedown;
         c.onmousemove = this.mousemove;
         c.onmouseup = this.mouseup;
+
         mType = type;
     };
 
