@@ -7,7 +7,7 @@ class MarkList extends Component {
 
     state = {
         current: 1,
-        pageSize: 1,
+        pageSize: 10,
         imgArray: [],
         total: 0
     };
@@ -25,6 +25,7 @@ class MarkList extends Component {
 
         httpGet("devices?page=" + page + "&per=" + per,
             function (response) {
+
                 that.setState({
                     imgArray:
                         response.rows,
@@ -51,8 +52,8 @@ class MarkList extends Component {
                         <div key={i} className={i === 0 ? "content_item" : "item_border content_item"}>
                             <img alt="" src={item.picture} />
                             <span>{item.id}</span>
-                            {/*<span>{item.ip}</span>*/}
-                            {/*<span>{item.name}</span>*/}
+                            <div>{item.position.length === 0 ? <Button type="danger" ghost>未标注</Button>
+                                : <Button type="primary">已标注</Button>}</div>
                             <Button type="primary"
                                 onClick={() => this.onMarkClick(item)}>标注</Button>
                         </div>
