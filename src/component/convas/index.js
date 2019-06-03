@@ -17,10 +17,7 @@ let startx,//起始x坐标
     type = 0,
     layers = [],//图层
     aLayers = [],//图层
-    currentR,//当前点击的矩形框
-    arc = 0,//op操作类型 0 无操作 1 圆 2 拖动圆
-    radii,
-    mType;
+    currentR;//当前点击的矩形框
 var url = ''; // canvas图片的二进制格式转为dataURL格式
 let reqData = [];
 class Index extends Component {
@@ -145,71 +142,130 @@ class Index extends Component {
 
     reshow = (x, y) => {
         let allNotIn = 1;
-        if (mType === 'arc') {
-            aLayers.forEach(item => {
-                ctx.beginPath();
-                ctx.arc(item.x1, item.y1, item.radii, 0, Math.PI * 2); // 第5个参数默认是false-顺时针
-                ctx.strokeStyle = item.strokeStyle;
 
-                if (ctx.isPointInPath(x * scale, y * scale)) {
-                    this.resizeLT(item);
-                    allNotIn = 0;
-                }
-                ctx.stroke();
-            });
-            if (flag && allNotIn && arc < 3) {
-                arc = 1
+        layers.forEach(item => {
+            ctx.beginPath();
+            ctx.rect(item.x1, item.y1, item.width, item.height);
+            ctx.strokeStyle = item.strokeStyle;
+            if (x >= (item.x1 - 10 / scale)
+                && x <= (item.x1 + 10 / scale)
+                && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 10 / scale)) {
+                this.resizeLeft(item);
+            } else if (x >= (item.x2 - 10 / scale)
+                && x <= (item.x2 + 10 / scale)
+                && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 10 / scale)) {
+                this.resizeWidth(item);
+            } else if (y >= (item.y1 - 10 / scale)
+                && y <= (item.y1 + 10 / scale)
+                && x <= (item.x2 - 10 / scale) && x >= (item.x1 + 10 / scale)) {
+                this.resizeTop(item);
+            } else if (y >= (item.y2 - 10 / scale)
+                && y <= (item.y2 + 10 / scale)
+                && x <= (item.x2 - 10 / scale) && x >= (item.x1 + 10 / scale)) {
+                this.resizeHeight(item);
+            } else if (x >= (item.x1 - 10 / scale)
+                && x <= (item.x1 + 10 / scale)
+                && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 10 / scale)) {
+                this.resizeLT(item);
+            } else if (x >= (item.x2 - 10 / scale)
+                && x <= (item.x2 + 10 / scale)
+                && y <= (item.y2 + 10 / scale)
+                && y >= (item.y2 - 10 / scale)) {
+                this.resizeWH(item);
+            } else if (x >= (item.x1 - 10 / scale)
+                && x <= (item.x1 + 25 / scale)
+                && y <= (item.y2 + 10 / scale) && y >= (item.y2 - 10 / scale)) {
+                this.resizeLH(item);
+            } else if (x >= (item.x2 - 10 / scale)
+                && x <= (item.x2 + 10 / scale)
+                && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 10 / scale)) {
+                this.resizeWT(item);
             }
-        } else {
-            layers.forEach(item => {
-                ctx.beginPath();
-                ctx.rect(item.x1, item.y1, item.width, item.height);
-                ctx.strokeStyle = item.strokeStyle;
-                if (x >= (item.x1 - 25 / scale)
-                    && x <= (item.x1 + 10 / scale)
-                    && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 25 / scale)) {
-                    this.resizeLeft(item);
-                } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 25 / scale)) {
-                    this.resizeWidth(item);
-                } else if (y >= (item.y1 - 10 / scale)
-                    && y <= (item.y1 + 10 / scale)
-                    && x <= (item.x2 - 25 / scale) && x >= (item.x1 + 25 / scale)) {
-                    this.resizeTop(item);
-                } else if (y >= (item.y2 - 10 / scale)
-                    && y <= (item.y2 + 10 / scale)
-                    && x <= (item.x2 - 25 / scale) && x >= (item.x1 + 25 / scale)) {
-                    this.resizeHeight(item);
-                } else if (x >= (item.x1 - 25 / scale)
-                    && x <= (item.x1 + 10 / scale)
-                    && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 25 / scale)) {
-                    this.resizeLT(item);
-                } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y2 + 10 / scale)
-                    && y >= (item.y2 - 10 / scale)) {
-                    this.resizeWH(item);
-                } else if (x >= (item.x1 - 25 / scale)
-                    && x <= (item.x1 + 25 / scale)
-                    && y <= (item.y2 + 10 / scale) && y >= (item.y2 - 10 / scale)) {
-                    this.resizeLH(item);
-                } else if (x >= (item.x2 - 25 / scale)
-                    && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 10 / scale)) {
-                    this.resizeWT(item);
-                }
-                if (ctx.isPointInPath(x * scale, y * scale)) {
-                    this.render1(item);
-                    allNotIn = 0;
-                }
-                ctx.stroke();
-            });
-            if (flag && allNotIn && op < 3) {
-                op = 1
+            if (ctx.isPointInPath(x * scale, y * scale)) {
+                this.render1(item);
+                allNotIn = 0;
             }
+            ctx.stroke();
+        });
+        if (flag && allNotIn && op < 3) {
+            op = 1
         }
+
     };
+    rectCircle = (layers) => {
+
+        let cirItem1, cirItem2, cirItem3;
+        for (let i = 0; i < layers.length; i++) {
+            let aLayers = [];
+            let mWidth = layers[i].width;
+            let mHeight = layers[i].height;
+            if (mWidth >= 90) {
+                let oneX = mWidth / 3 / 2;
+                let twoX = (mWidth / 3) + oneX;
+                let threeX = mWidth - oneX;
+                let cirY = mHeight / 2;
+                cirItem1 = {
+                    x1: parseInt(layers[i].x1 + oneX),
+                    y1: parseInt(cirY + layers[i].y1),
+                    radius: parseInt(cirY - 3),
+                    strokeStyle: "#fffeee"
+                }
+                cirItem2 = {
+                    x1: parseInt(layers[i].x1 + twoX),
+                    y1: parseInt(cirY + layers[i].y1),
+                    radius: parseInt(cirY - 3),
+                    strokeStyle: "#fffeee"
+                }
+                cirItem3 = {
+                    x1: parseInt(layers[i].x1 + threeX),
+                    y1: parseInt(cirY + layers[i].y1),
+                    radius: parseInt(cirY - 3),
+                    strokeStyle: "#fffeee"
+                }
+                aLayers.push(cirItem1)
+                aLayers.push(cirItem2)
+                aLayers.push(cirItem3);
+                aLayers.forEach(item => {
+                    ctx.strokeStyle = "#9B30FF";
+                    ctx.beginPath();
+                    ctx.arc(item.x1, item.y1, item.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                });
+            } else {
+                let oneY = mHeight / 3 / 2;
+                let twoY = (mHeight / 3) + oneY;
+                let threeY = mHeight - oneY;
+                let cirX = mWidth / 2;
+                cirItem1 = {
+                    x1: parseInt(layers[i].x1 + cirX),
+                    y1: parseInt(oneY + layers[i].y1),
+                    radius: parseInt(oneY - 3),
+                    strokeStyle: "#fffeee"
+                }
+                cirItem2 = {
+                    x1: parseInt(layers[i].x1 + cirX),
+                    y1: parseInt(twoY + layers[i].y1),
+                    radius: parseInt(oneY - 3),
+                    strokeStyle: "#fffeee"
+                }
+                cirItem3 = {
+                    x1: parseInt(layers[i].x1 + cirX),
+                    y1: parseInt(threeY + layers[i].y1),
+                    radius: parseInt(oneY - 3),
+                    strokeStyle: "#fffeee"
+                }
+            }
+            aLayers.push(cirItem1)
+            aLayers.push(cirItem2)
+            aLayers.push(cirItem3);
+            aLayers.forEach((item, index) => {
+                ctx.strokeStyle = "#9B30FF";
+                ctx.beginPath();
+                ctx.arc(item.x1, item.y1, item.radius, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+        }
+    }
     render1 = (rect) => {
         c.style.cursor = "move";
         if (flag && op === 0) {
@@ -256,17 +312,12 @@ class Index extends Component {
         return position
     };
     btnUndo = () => {
-        if (mType === 'arc') {
-            aLayers.pop();
-            for (let i = 0; i < layers.length; i++) {
-                ctx.clearRect(layers[i].x1, layers[i].y1,
-                    layers[i].width, layers[i].height);
-            }
-        } else {
-            layers.pop();
-            aLayers.pop();
-            ctx.clearRect(0, 0, c.width, c.height);
-        }
+
+        layers = [];
+        aLayers = [];
+
+        ctx.clearRect(0, 0, c.width, c.height);
+
         url = "";
         this.reshow();
     };
@@ -283,12 +334,10 @@ class Index extends Component {
             leftDistance = startx - currentR.x1;
             topDistance = starty - currentR.y1;
         }
-        if (mType === 'arc') {
-            ctx.strokeStyle = "#FF0000";
-        } else {
-            ctx.strokeStyle = "#FF0000";
-            ctx.strokeRect(x, y, 0, 0);
-        }
+
+        ctx.strokeStyle = "#FF0000";
+        ctx.strokeRect(x, y, 0, 0);
+
         flag = 1;
     };
     mousemove = (e) => {
@@ -302,42 +351,8 @@ class Index extends Component {
         c.style.cursor = "default";
         ctx.clearRect(0, 0, c.width, c.height);
         this.loadImage();
-
-
-        if (mType === 'arc') {
-            for (let i = 0; i < layers.length; i++) {
-                let numbers = [];
-                if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
-                    && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
-                    radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
-                    //为了计算拖动的时候圆的半径不能大于锯形 
-                    //1.先计算圆点坐标到锯形四条边的距离
-                    //2.然后根据四条边中的最小距离跟半径对比 如果大于或者等于了最小的边 就说明超出了
-                    let top = starty - layers[i].y1;
-                    let left = startx - layers[i].x1;
-                    let right = layers[i].x2 - startx;
-                    let bottom = layers[i].y2 - starty;
-                    numbers.push(top);
-                    numbers.push(left);
-                    numbers.push(right);
-                    numbers.push(bottom);
-
-                    numbers.sort(function (a, b) { return a - b; })
-                    if (radii >= numbers[0]) {
-                        radii = numbers[0];
-                    }
-                    if (flag && arc === 1) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = "red";
-                        ctx.arc(startx, starty, radii, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                }
-            }
-        } else {
-            if (flag && op === 1) {
-                ctx.strokeRect(startx, starty, x - startx, y - starty);
-            }
+        if (flag && op === 1) {
+            ctx.strokeRect(startx, starty, x - startx, y - starty);
         }
         ctx.restore();
         this.reshow(x, y);
@@ -345,45 +360,26 @@ class Index extends Component {
 
 
     mouseup = (e) => {
-
-        url = c.toDataURL();
-
-        if (mType === 'arc') {
-            for (let i = 0; i < layers.length; i++) {
-                if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
-                    && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
-                    if (arc === 1) {
-                        aLayers.push(this.fixPosition({
-                            x1: startx,
-                            y1: starty,
-                            radii: radii,
-                            strokeStyle: '#FF0000',
-                        }))
-                    } else if (arc >= 3) {
-                        this.fixPosition(currentR)
-                    }
-                }
-            }
-        } else {
-            if (op === 1) {
-                layers.push(this.fixPosition({
-                    x1: startx,
-                    y1: starty,
-                    x2: x,
-                    y2: y,
-                    strokeStyle: '#FF0000',
-                    type: type
-                }))
-            } else if (op >= 3) {
-                this.fixPosition(currentR)
-            }
+        if (op === 1) {
+            layers.push(this.fixPosition({
+                x1: startx,
+                y1: starty,
+                x2: x,
+                y2: y,
+                strokeStyle: '#FF0000',
+                type: type
+            }))
+        } else if (op >= 3) {
+            this.fixPosition(currentR)
         }
+        ctx.clearRect(0, 0, c.width, c.height);
+        this.rectCircle(layers);
         op = 0;
-        arc = 0;
         currentR = null;
         flag = 0;
         ctx.save();
         this.reshow(x, y);
+        url = c.toDataURL();
     };
 
     componentDidMount() {
@@ -441,7 +437,7 @@ class Index extends Component {
                     let arcItem = {
                         centerX: arc.x1,
                         centerY: arc.y1,
-                        radius: parseInt(arc.radii)
+                        radius: arc.radius
                     }
 
                     mArc.push(arcItem);
@@ -452,7 +448,7 @@ class Index extends Component {
         }
         // reqDataItem.data = reqData;
         console.log(JSON.stringify(reqData));
-        this.submitData();
+        // this.submitData();
     };
 
 
@@ -479,28 +475,17 @@ class Index extends Component {
             });
     };
 
-    clickCircle = () => {
 
-        if (layers.length === 0) {
-            message.warning("请先画锯形！");
-            return;
-        }
-        this.changeEvent('arc');
-    };
 
     clickRect = () => {
 
-        this.changeEvent('rect');
-    };
-
-
-    changeEvent = (type) => {
         c.onmousedown = this.mousedown;
         c.onmousemove = this.mousemove;
         c.onmouseup = this.mouseup;
 
-        mType = type;
     };
+
+
 
     render() {
 
@@ -521,10 +506,6 @@ class Index extends Component {
                         top: 10,
                         right: 10,
                     }}>
-                        <Button type="primary"
-                            style={{ marginTop: '10px' }}
-                            onClick={this.clickCircle}>圆形</Button>
-
                         <Button type="primary"
                             style={{ marginTop: '10px', marginLeft: '10px' }}
                             onClick={this.clickRect}>矩形</Button>
