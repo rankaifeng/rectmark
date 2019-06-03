@@ -20,6 +20,7 @@ let startx,//起始x坐标
     currentR;//当前点击的矩形框
 var url = ''; // canvas图片的二进制格式转为dataURL格式
 let reqData = [];
+let arcArray = [];
 class Index extends Component {
     resizeLeft = (rect) => {
         c.style.cursor = "w-resize";
@@ -193,7 +194,7 @@ class Index extends Component {
 
     };
     rectCircle = (layers) => {
-
+        arcArray = [];
         let cirItem1, cirItem2, cirItem3;
         for (let i = 0; i < layers.length; i++) {
             let aLayers = [];
@@ -258,13 +259,15 @@ class Index extends Component {
             aLayers.push(cirItem1)
             aLayers.push(cirItem2)
             aLayers.push(cirItem3);
-            aLayers.forEach((item, index) => {
+            aLayers.forEach(item => {
                 ctx.strokeStyle = "#9B30FF";
                 ctx.beginPath();
                 ctx.arc(item.x1, item.y1, item.radius, 0, Math.PI * 2);
                 ctx.stroke();
+                arcArray.push(item);
             });
         }
+        console.log(arcArray);
     }
     render1 = (rect) => {
         c.style.cursor = "move";
@@ -372,6 +375,7 @@ class Index extends Component {
         } else if (op >= 3) {
             this.fixPosition(currentR)
         }
+        console.log(layers);
         ctx.clearRect(0, 0, c.width, c.height);
         this.rectCircle(layers);
         op = 0;
@@ -423,15 +427,15 @@ class Index extends Component {
         }
         for (let i = 0; i < reqData.length; i++) {
 
+
             let mArc = [];
 
-            for (let j = 0; j < aLayers.length; j++) {
-                if (aLayers[j].x1 >= reqData[i].x1
-                    && aLayers[j].x1 <= reqData[i].x1 + reqData[i].width
-                    && aLayers[j].y1 >= reqData[i].y1 && aLayers[j].y1
+            for (let j = 0; j < arcArray.length; j++) {
+                if (arcArray[j].x1 >= reqData[i].x1
+                    && arcArray[j].x1 <= reqData[i].x1 + reqData[i].width
+                    && arcArray[j].y1 >= reqData[i].y1 && arcArray[j].y1
                     <= reqData[i].y1 + reqData[i].height) {
-                    let arc = aLayers[j];
-
+                    let arc = arcArray[j];
                     let arcItem = {
                         centerX: arc.x1,
                         centerY: arc.y1,
