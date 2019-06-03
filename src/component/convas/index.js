@@ -393,10 +393,8 @@ class Index extends Component {
         c.style.backgroundImage = "url(" + img.src + ")";
         c.style.border = '1px solid #aeaeae';
         img.onload = function (param) { }
-        // c.width = img.width;
-        // c.height = img.height;
-        c.width = 500;
-        c.height = 500;
+        c.width = img.width;
+        c.height = img.height;
         c.style.backgroundSize = `${c.offsetWidth}px ${c.offsetHeight}px`;
     }
     loadImage() {
@@ -448,13 +446,13 @@ class Index extends Component {
         }
         // reqDataItem.data = reqData;
         console.log(JSON.stringify(reqData));
-        // this.submitData();
+        this.submitData();
     };
 
 
     submitData = () => {
         let that = this;
-        axIos.put('http://192.168.30.122:3001/devices/'
+        axIos.put('http://192.168.30.120:3001/devices/'
             + this.props.location.query.item.id,
             { "position": reqData })
             .then(function (response) {

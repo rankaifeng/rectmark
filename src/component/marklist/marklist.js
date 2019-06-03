@@ -51,8 +51,8 @@ class MarkList extends Component {
                         <div key={i} className={i === 0 ? "content_item" : "item_border content_item"}>
                             <img alt="" src={item.picture} />
                             <span>{item.id}</span>
-                            <div>{item.position.length === 0 ? <Button type="danger" ghost>未标注</Button>
-                                : <Button type="primary">已标注</Button>}</div>
+                            <div>{item.position.length === 0 ? <div style={{color:'#1890ff'}}>未标注</div>
+                                : <div style={{color:'red'}}>已标注</div>}</div>
                             <Button type="primary"
                                 onClick={() => this.onMarkClick(item)}>标注</Button>
                         </div>
