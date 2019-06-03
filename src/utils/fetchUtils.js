@@ -1,5 +1,5 @@
-let baseUrl = "http://192.168.100.137:3001/";
-
+// let baseUrl = "http://192.168.30.115:3001/";
+let baseUrl = "http://192.168.30.122:3001/";
 /* POST 请求 */
 export function httpPost(url, data, callBack) {
     httpRequest(url, data, 'PUT', callBack);

@@ -22,16 +22,15 @@ class MarkList extends Component {
     requestImg = (page, per) => {
         let that = this;
 
-
         httpGet("devices?page=" + page + "&per=" + per,
             function (response) {
-
                 that.setState({
-                    imgArray:
-                        response.rows,
+                    imgArray: response.rows,
                     current: page,
-                    pageSize: per, total: response.total
+                    pageSize: per,
+                    total: response.total
                 });
+
             });
     };
 

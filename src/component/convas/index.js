@@ -83,19 +83,18 @@ class Index extends Component {
 
     resizeLT = (rect) => {
         // c.style.cursor = "move";
-        if (flag && op === 0) {
-            op = 7;
-        }
-        if (flag && op === 7) {
-            if (!currentR) {
-                currentR = rect
-            }
-
-            // currentR.x1 = x;
-            // currentR.y1 = y;
-            // currentR.height = currentR.y2 - currentR.y1;
-            // currentR.width = currentR.x2 - currentR.x1;
-        }
+        // if (flag && op === 0) {
+        //     op = 7;
+        // }
+        // if (flag && op === 7) {
+        //     if (!currentR) {
+        //         currentR = rect
+        //     }
+        //     currentR.x1 = x;
+        //     currentR.y1 = y;
+        //     currentR.height = currentR.y2 - currentR.y1;
+        //     currentR.width = currentR.x2 - currentR.x1;
+        // }
     };
 
     resizeWH = (rect) => {
@@ -137,10 +136,10 @@ class Index extends Component {
             if (!currentR) {
                 currentR = rect
             }
-            // currentR.x2 = x;
-            // currentR.y1 = y;
-            // currentR.height = currentR.y2 - currentR.y1;
-            // currentR.width = currentR.x2 - currentR.x1;
+            currentR.x2 = x;
+            currentR.y1 = y;
+            currentR.height = currentR.y2 - currentR.y1;
+            currentR.width = currentR.x2 - currentR.x1;
         }
     };
 
@@ -168,36 +167,36 @@ class Index extends Component {
                 ctx.strokeStyle = item.strokeStyle;
                 if (x >= (item.x1 - 25 / scale)
                     && x <= (item.x1 + 10 / scale)
-                    && y <= (item.y2 - 25 / scale) && y >= (item.y1 + 25 / scale)) {
+                    && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 25 / scale)) {
                     this.resizeLeft(item);
                 } else if (x >= (item.x2 - 25 / scale)
                     && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y2 - 25 / scale) && y >= (item.y1 + 25 / scale)) {
+                    && y <= (item.y2 - 10 / scale) && y >= (item.y1 + 25 / scale)) {
                     this.resizeWidth(item);
-                } else if (y >= (item.y1 - 25 / scale)
-                    && y <= (item.y1 + 25 / scale)
+                } else if (y >= (item.y1 - 10 / scale)
+                    && y <= (item.y1 + 10 / scale)
                     && x <= (item.x2 - 25 / scale) && x >= (item.x1 + 25 / scale)) {
                     this.resizeTop(item);
-                } else if (y >= (item.y2 - 25 / scale)
-                    && y <= (item.y2 + 25 / scale)
+                } else if (y >= (item.y2 - 10 / scale)
+                    && y <= (item.y2 + 10 / scale)
                     && x <= (item.x2 - 25 / scale) && x >= (item.x1 + 25 / scale)) {
                     this.resizeHeight(item);
                 } else if (x >= (item.x1 - 25 / scale)
                     && x <= (item.x1 + 10 / scale)
-                    && y <= (item.y1 + 25 / scale) && y >= (item.y1 - 25 / scale)) {
+                    && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 25 / scale)) {
                     this.resizeLT(item);
                 } else if (x >= (item.x2 - 25 / scale)
                     && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y2 + 25 / scale)
-                    && y >= (item.y2 - 25 / scale)) {
+                    && y <= (item.y2 + 10 / scale)
+                    && y >= (item.y2 - 10 / scale)) {
                     this.resizeWH(item);
                 } else if (x >= (item.x1 - 25 / scale)
                     && x <= (item.x1 + 25 / scale)
-                    && y <= (item.y2 + 25 / scale) && y >= (item.y2 - 25 / scale)) {
+                    && y <= (item.y2 + 10 / scale) && y >= (item.y2 - 10 / scale)) {
                     this.resizeLH(item);
                 } else if (x >= (item.x2 - 25 / scale)
                     && x <= (item.x2 + 10 / scale)
-                    && y <= (item.y1 + 25 / scale) && y >= (item.y1 - 25 / scale)) {
+                    && y <= (item.y1 + 10 / scale) && y >= (item.y1 - 10 / scale)) {
                     this.resizeWT(item);
                 }
                 if (ctx.isPointInPath(x * scale, y * scale)) {
@@ -260,12 +259,15 @@ class Index extends Component {
         if (mType === 'arc') {
             aLayers.pop();
             for (let i = 0; i < layers.length; i++) {
-                ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
+                ctx.clearRect(layers[i].x1, layers[i].y1,
+                    layers[i].width, layers[i].height);
             }
         } else {
             layers.pop();
+            aLayers.pop();
             ctx.clearRect(0, 0, c.width, c.height);
         }
+        url = "";
         this.reshow();
     };
     btnEmpty = () => {
@@ -282,9 +284,9 @@ class Index extends Component {
             topDistance = starty - currentR.y1;
         }
         if (mType === 'arc') {
-            ctx.strokeStyle = "#0000ff";
+            ctx.strokeStyle = "#FF0000";
         } else {
-            ctx.strokeStyle = "#0000ff";
+            ctx.strokeStyle = "#FF0000";
             ctx.strokeRect(x, y, 0, 0);
         }
         flag = 1;
@@ -292,14 +294,19 @@ class Index extends Component {
     mousemove = (e) => {
         x = (e.pageX - c.offsetLeft + c.parentElement.scrollLeft) / scale;
         y = (e.pageY - c.offsetTop + c.parentElement.scrollTop) / scale;
-        // ctx.save();
+        if (startx == null || starty == null) {
+            return;
+        }
+        ctx.save();
         // ctx.setLineDash([5]);
         c.style.cursor = "default";
-        
+        ctx.clearRect(0, 0, c.width, c.height);
+        this.loadImage();
+
+
         if (mType === 'arc') {
             for (let i = 0; i < layers.length; i++) {
                 let numbers = [];
-                ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
                 if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
                     && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
                     radii = Math.sqrt((startx - x) * (startx - x) + (starty - y) * (starty - y));
@@ -316,20 +323,18 @@ class Index extends Component {
                     numbers.push(bottom);
 
                     numbers.sort(function (a, b) { return a - b; })
-                    if (radii >= numbers[0] - 1) {
-                        radii = numbers[0] - 1;
+                    if (radii >= numbers[0]) {
+                        radii = numbers[0];
                     }
                     if (flag && arc === 1) {
                         ctx.beginPath();
-                        ctx.strokeStyle = "#0000ff";
+                        ctx.strokeStyle = "red";
                         ctx.arc(startx, starty, radii, 0, Math.PI * 2);
                         ctx.stroke();
                     }
                 }
             }
         } else {
-            ctx.clearRect(0, 0, c.width, c.height);
-            this.loadImage();
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
             }
@@ -340,10 +345,11 @@ class Index extends Component {
 
 
     mouseup = (e) => {
+
+        url = c.toDataURL();
+
         if (mType === 'arc') {
-            url = c.toDataURL();
             for (let i = 0; i < layers.length; i++) {
-                ctx.clearRect(layers[i].x1, layers[i].y1, layers[i].width, layers[i].height);
                 if (startx >= layers[i].x1 && startx <= layers[i].x1 + layers[i].width
                     && starty >= layers[i].y1 && starty <= layers[i].y1 + layers[i].height) {
                     if (arc === 1) {
@@ -351,7 +357,7 @@ class Index extends Component {
                             x1: startx,
                             y1: starty,
                             radii: radii,
-                            strokeStyle: '#0000ff',
+                            strokeStyle: '#FF0000',
                         }))
                     } else if (arc >= 3) {
                         this.fixPosition(currentR)
@@ -365,7 +371,7 @@ class Index extends Component {
                     y1: starty,
                     x2: x,
                     y2: y,
-                    strokeStyle: '#0000ff',
+                    strokeStyle: '#FF0000',
                     type: type
                 }))
             } else if (op >= 3) {
@@ -381,10 +387,8 @@ class Index extends Component {
     };
 
     componentDidMount() {
-
         c = document.getElementById("myCanvas");
         ctx = c.getContext("2d");
-        ctx.strokeWidth = 1;
         img = document.createElement('img');
         if (this.props.location.query != null) {
             let item = this.props.location.query;
@@ -392,8 +396,11 @@ class Index extends Component {
         }
         c.style.backgroundImage = "url(" + img.src + ")";
         c.style.border = '1px solid #aeaeae';
-        c.width = 3392;
-        c.height = 2008;
+        img.onload = function (param) { }
+        // c.width = img.width;
+        // c.height = img.height;
+        c.width = 500;
+        c.height = 500;
         c.style.backgroundSize = `${c.offsetWidth}px ${c.offsetHeight}px`;
     }
     loadImage() {
@@ -451,15 +458,16 @@ class Index extends Component {
 
     submitData = () => {
         let that = this;
-        axIos.put('http://192.168.100.137:3001/devices/'
+        axIos.put('http://192.168.30.122:3001/devices/'
             + this.props.location.query.item.id,
             { "position": reqData })
             .then(function (response) {
                 if (response.data.status === "200") {
                     message.success(response.data.message);
-                    layers = [];
-                    aLayers = [];
-                    reqData = [];
+                    layers.splice(0, layers.length);
+                    aLayers.splice(0, aLayers.length);
+                    reqData.splice(0, reqData.length);
+                    url = "";
                     ctx.clearRect(0, 0, c.width, c.height);
                     that.props.history.push("/mark_list");
                 } else {
@@ -477,9 +485,6 @@ class Index extends Component {
             message.warning("请先画锯形！");
             return;
         }
-
-
-
         this.changeEvent('arc');
     };
 
