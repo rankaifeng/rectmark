@@ -1,5 +1,4 @@
-// let baseUrl = "http://192.168.30.115:3001/";
-let baseUrl = "http://192.168.30.120:3001/";
+import { HTTP_URL } from '../utils/config';
 /* POST 请求 */
 export function httpPost(url, data, callBack) {
     httpRequest(url, data, 'PUT', callBack);
@@ -36,7 +35,7 @@ function fetchGetOrPost(url, data, type) {
     if (type === "PUT") {
         fetchData.body = JSON.stringify(data);
     }
-    return fetch(`${baseUrl}${url}`, fetchData);
+    return fetch(`${HTTP_URL}${url}`, fetchData);
 }
 
 /* 添加header头部信息 */

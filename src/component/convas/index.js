@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, message } from 'antd';
 import axIos from 'axios'
+import { HTTP_URL } from '../../utils/config';
 let c;
 let ctx, img;
 
@@ -193,39 +194,31 @@ class Index extends Component {
         }
 
     };
+
+    findMaxNumber(layers) {
+        let maxItem = layers[layers.length - 1];
+        return maxItem.width > maxItem.height
+            ? maxItem.width : maxItem.height;
+    }
+
     rectCircle = (layers) => {
         arcArray = [];
-        let cirItem1, cirItem2, cirItem3;
         for (let i = 0; i < layers.length; i++) {
             let aLayers = [];
             let mWidth = layers[i].width;
             let mHeight = layers[i].height;
-            if (mWidth >= 90) {
+            if (mWidth >= mHeight) {
                 let oneX = mWidth / 3 / 2;
-                let twoX = (mWidth / 3) + oneX;
-                let threeX = mWidth - oneX;
                 let cirY = mHeight / 2;
-                cirItem1 = {
-                    x1: parseInt(layers[i].x1 + oneX),
-                    y1: parseInt(cirY + layers[i].y1),
-                    radius: parseInt(cirY - 3),
-                    strokeStyle: "#fffeee"
+                for (let j = 1; j < 6; j += 2) {
+                    let cirItem1 = {
+                        x1: parseInt(layers[i].x1 + oneX * j),
+                        y1: parseInt(cirY + layers[i].y1),
+                        radius: parseInt(cirY - 3),
+                        strokeStyle: "#fffeee"
+                    }
+                    aLayers.push(cirItem1)
                 }
-                cirItem2 = {
-                    x1: parseInt(layers[i].x1 + twoX),
-                    y1: parseInt(cirY + layers[i].y1),
-                    radius: parseInt(cirY - 3),
-                    strokeStyle: "#fffeee"
-                }
-                cirItem3 = {
-                    x1: parseInt(layers[i].x1 + threeX),
-                    y1: parseInt(cirY + layers[i].y1),
-                    radius: parseInt(cirY - 3),
-                    strokeStyle: "#fffeee"
-                }
-                aLayers.push(cirItem1)
-                aLayers.push(cirItem2)
-                aLayers.push(cirItem3);
                 aLayers.forEach(item => {
                     ctx.strokeStyle = "#9B30FF";
                     ctx.beginPath();
@@ -234,31 +227,17 @@ class Index extends Component {
                 });
             } else {
                 let oneY = mHeight / 3 / 2;
-                let twoY = (mHeight / 3) + oneY;
-                let threeY = mHeight - oneY;
                 let cirX = mWidth / 2;
-                cirItem1 = {
-                    x1: parseInt(layers[i].x1 + cirX),
-                    y1: parseInt(oneY + layers[i].y1),
-                    radius: parseInt(oneY - 3),
-                    strokeStyle: "#fffeee"
-                }
-                cirItem2 = {
-                    x1: parseInt(layers[i].x1 + cirX),
-                    y1: parseInt(twoY + layers[i].y1),
-                    radius: parseInt(oneY - 3),
-                    strokeStyle: "#fffeee"
-                }
-                cirItem3 = {
-                    x1: parseInt(layers[i].x1 + cirX),
-                    y1: parseInt(threeY + layers[i].y1),
-                    radius: parseInt(oneY - 3),
-                    strokeStyle: "#fffeee"
+                for (let k = 1; k < 6; k += 2) {
+                    let cirItem1 = {
+                        x1: parseInt(layers[i].x1 + cirX),
+                        y1: parseInt(k * oneY + layers[i].y1),
+                        radius: parseInt(oneY - 3),
+                        strokeStyle: "#fffeee"
+                    }
+                    aLayers.push(cirItem1)
                 }
             }
-            aLayers.push(cirItem1)
-            aLayers.push(cirItem2)
-            aLayers.push(cirItem3);
             aLayers.forEach(item => {
                 ctx.strokeStyle = "#9B30FF";
                 ctx.beginPath();
@@ -267,7 +246,6 @@ class Index extends Component {
                 arcArray.push(item);
             });
         }
-        console.log(arcArray);
     }
     render1 = (rect) => {
         c.style.cursor = "move";
@@ -375,7 +353,6 @@ class Index extends Component {
         } else if (op >= 3) {
             this.fixPosition(currentR)
         }
-        console.log(layers);
         ctx.clearRect(0, 0, c.width, c.height);
         this.rectCircle(layers);
         op = 0;
@@ -456,15 +433,16 @@ class Index extends Component {
 
     submitData = () => {
         let that = this;
-        axIos.put('http://192.168.30.120:3001/devices/'
+        axIos.put(HTTP_URL
             + this.props.location.query.item.id,
             { "position": reqData })
             .then(function (response) {
                 if (response.data.status === "200") {
                     message.success(response.data.message);
-                    layers.splice(0, layers.length);
-                    aLayers.splice(0, aLayers.length);
-                    reqData.splice(0, reqData.length);
+                    layers = [];
+                    aLayers = [];
+                    reqData = [];
+                    arcArray = [];
                     url = "";
                     ctx.clearRect(0, 0, c.width, c.height);
                     that.props.history.push("/mark_list");
@@ -480,17 +458,12 @@ class Index extends Component {
 
 
     clickRect = () => {
-
         c.onmousedown = this.mousedown;
         c.onmousemove = this.mousemove;
         c.onmouseup = this.mouseup;
-
     };
 
-
-
     render() {
-
         return (
             <div style={{ width: 700, height: 500 }} id="conent">
                 <canvas id="myCanvas" />
