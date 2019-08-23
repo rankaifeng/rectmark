@@ -433,7 +433,7 @@ class Index extends Component {
 
     submitData = () => {
         let that = this;
-        axIos.put(HTTP_URL
+        axIos.put(HTTP_UR + "device/"
             + this.props.location.query.item.id,
             { "position": reqData })
             .then(function (response) {
